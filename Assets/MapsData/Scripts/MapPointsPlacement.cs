@@ -51,7 +51,7 @@ public class MapPointsPlacement : MonoBehaviour {
 
             var mapPoint = Instantiate(CheckpointIndicator);
             mapPoint.transform.position = _map.GeoToWorldPosition(_locations[count], false);
-            mapPoint.GetComponent<MapItem>().Init(locationsData[i]);
+            //mapPoint.GetComponent<MapItem>().Init(locationsData[i]);
             Debug.LogWarning(_map.GeoToWorldPosition(_locations[count], true));
 
             _spawnedObjects.Add(mapPoint);
