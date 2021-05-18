@@ -20,9 +20,9 @@ public class MapItem : MonoBehaviour {
     }
     void OnMouseDown()
     {
-        PathDrawer.instance.popup.SetActive(true);
+        //PathDrawer.instance.popup.SetActive(true);
        // PathDrawer.instance.targetLocation = location;
-        PathDrawer.instance.target = transform;
+        //PathDrawer.instance.target = transform;
     }
 
 }
