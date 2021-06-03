@@ -11,6 +11,7 @@ public class MapItem : MonoBehaviour {
     {
        // GetComponent<Button>().onClick.AddListener(delegate { TaskOnClick(location); });
     }
+    public string location;
 
     private void TaskOnClick(string location)
     {
@@ -20,9 +21,9 @@ public class MapItem : MonoBehaviour {
     }
     void OnMouseDown()
     {
-        //PathDrawer.instance.popup.SetActive(true);
-       // PathDrawer.instance.targetLocation = location;
-        //PathDrawer.instance.target = transform;
+        PathDrawer.instance.popup.SetActive(true);
+        PathDrawer.instance.targetLocation = location;
+        PathDrawer.instance.target = transform;
     }
 
 }

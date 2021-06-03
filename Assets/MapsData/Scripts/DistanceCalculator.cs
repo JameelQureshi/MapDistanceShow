@@ -33,7 +33,7 @@ public class DistanceCalculator : MonoBehaviour {
         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
         double distance = earthRadius * c;
 
-        return distance;
+        return distance*1000;
     }
 
 
