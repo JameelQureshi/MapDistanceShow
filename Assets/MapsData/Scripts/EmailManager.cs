@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-
+using UnityEngine.Networking;
 
 public class EmailManager : MonoBehaviour
 {
@@ -12,31 +12,17 @@ public class EmailManager : MonoBehaviour
    // [SerializeField] TMPro.TextMeshProUGUI txtData;
     //[SerializeField] UnityEngine.UI.Button btnSubmit;
     [SerializeField] bool sendDirect;
+    readonly string URL = "https://staging.interappusa.com/public/send_email";
 
-    const string kSenderEmailAddress = "myalldevices2021@gmail.com";
-    const string kSenderPassword = "Player2013";
     const string kReceiverEmailAddress = "onegreggybrady@gmail.com";
+    //const string kReceiverEmailAddress = "jameelqureshi2013@gmail.com";
+    
 
-    // Method 2: Server request
-    const string url = "https://coderboy6000.000webhostapp.com/emailer.php";
-
-    void Start()
-    {
-        //UnityEngine.Assertions.Assert.IsNotNull(txtData);
-        //UnityEngine.Assertions.Assert.IsNotNull(btnSubmit);
-        //btnSubmit.onClick.AddListener(delegate {
-        //    if (sendDirect)
-        //    {
-        //        SendAnEmail(txtData.text);
-        //    }
-        //    else
-        //    {
-        //        SendServerRequestForEmail(txtData.text);
-        //    }
-        //});
-    }
+   
 
     public static bool bzb1=true, bzb2=true, bzb3=true, bzb4=true, Dad=true;
+
+    
 
     public void SendEmail(string targetName)
     {
@@ -46,8 +32,8 @@ public class EmailManager : MonoBehaviour
             case "bzb1":
                 if (bzb1)
                 {
-                    string message = "User Scaaned " + targetName;
-                    SendAnEmail(message);
+                    string message = "User At " + targetName;
+                    StartCoroutine(PostSendEmailRequest(kReceiverEmailAddress,message,"Map Position Alert"));
                     bzb1 = false;
                 }
                 break;
@@ -55,8 +41,8 @@ public class EmailManager : MonoBehaviour
             case "bzb2":
                 if (bzb2)
                 {
-                    string message = "User Scaaned " + targetName;
-                    SendAnEmail(message);
+                    string message = "User At " + targetName;
+                    StartCoroutine(PostSendEmailRequest(kReceiverEmailAddress, message, "Map Position Alert"));
                     bzb2 = false;
                 }
                 break;
@@ -64,8 +50,8 @@ public class EmailManager : MonoBehaviour
             case "bzb3":
                 if (bzb3)
                 {
-                    string message = "User Scaaned " + targetName;
-                    SendAnEmail(message);
+                    string message = "User At " + targetName;
+                    StartCoroutine(PostSendEmailRequest(kReceiverEmailAddress, message, "Map Position Alert"));
                     bzb3 = false;
                 }
                 break;
@@ -73,8 +59,8 @@ public class EmailManager : MonoBehaviour
             case "bzb4":
                 if (bzb4)
                 {
-                    string message = "User Scaaned " + targetName;
-                    SendAnEmail(message);
+                    string message = "User At " + targetName;
+                    StartCoroutine(PostSendEmailRequest(kReceiverEmailAddress, message, "Map Position Alert"));
                     bzb4 = false;
                 }
                 break;
@@ -82,8 +68,8 @@ public class EmailManager : MonoBehaviour
             case "Dad":
                 if (Dad)
                 {
-                    string message = "User Scaaned " + targetName;
-                    SendAnEmail(message);
+                    string message = "User At " + targetName;
+                    StartCoroutine(PostSendEmailRequest(kReceiverEmailAddress, message, "Map Position Alert"));
                     Dad = false;
                 }
                 break;
@@ -93,74 +79,30 @@ public class EmailManager : MonoBehaviour
         
     }
 
-    // Method 1: Direct message
-    public static void SendAnEmail(string message)
+    
+
+    IEnumerator PostSendEmailRequest(string email, string text, string subject)
     {
-        // Create mail
-        MailMessage mail = new MailMessage();
-        mail.From = new MailAddress(kSenderEmailAddress);
-        mail.To.Add(kReceiverEmailAddress);
-        mail.Subject = "Scan Update";
-        mail.Body = message;
-
-        // Setup server 
-        SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
-        smtpServer.Port = 587;
-        smtpServer.Credentials = new NetworkCredential(
-            kSenderEmailAddress, kSenderPassword) as ICredentialsByHost;
-        smtpServer.EnableSsl = true;
-        ServicePointManager.ServerCertificateValidationCallback =
-            delegate (object s, X509Certificate certificate,
-            X509Chain chain, SslPolicyErrors sslPolicyErrors) {
-                Debug.Log("Email success!");
-                return true;
-            };
-
-        // Send mail to server, print results
-        try
-        {
-            smtpServer.Send(mail);
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Email error: " + e.Message);
-        }
-        finally
-        {
-            Debug.Log("Email sent!");
-        }
-    }
-
-    // Method 2: Server request
-    private void SendServerRequestForEmail(string message)
-    {
-        StartCoroutine(SendMailRequestToServer(message));
-    }
-
-    // Method 2: Server request
-    static IEnumerator SendMailRequestToServer(string message)
-    {
-        // Setup form responses
         WWWForm form = new WWWForm();
-        form.AddField("name", "It's me!");
-        form.AddField("fromEmail", kSenderEmailAddress);
-        form.AddField("toEmail", kReceiverEmailAddress);
-        form.AddField("message", message);
+        form.AddField("email", email);
+        form.AddField("text", text);
+        form.AddField("subject", subject);
 
-        // Submit form to our server, then wait
-        WWW www = new WWW(url, form);
-        Debug.Log("Email sent!");
-
-        yield return www;
-
-        // Print results
-        if (www.error == null)
+        using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
         {
-            Debug.Log("WWW Success!: " + www.text);
-        }
-        else
-        {
-            Debug.Log("WWW Error: " + www.error);
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                Debug.Log("Email Sent!");
+            }
         }
     }
+
+
+    
 }
